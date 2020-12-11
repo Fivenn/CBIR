@@ -2,11 +2,12 @@
 
 from __future__ import print_function
 
-import pandas as pd
 import os
 
-DB_dir = 'database'
-DB_csv = 'data.csv'
+import pandas as pd
+
+DB_dir = '../databaseDataSet/train'  # or DB_dir = 'databaseDataSet/train'
+DB_csv = '../data_train.csv'  # or DB_csv = 'data_train.csv'
 
 
 class Database(object):

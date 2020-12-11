@@ -2,23 +2,23 @@
 
 from __future__ import print_function
 
-from evaluate import distance, evaluate_class
-from DB import Database
-
-from six.moves import cPickle
-import numpy as np
-import imageio
 import itertools
 import os
 
+import imageio
+import numpy as np
+from six.moves import cPickle
+
+from DB import Database
+from evaluate import evaluate_class
 
 # configs for histogram
-n_bin = 12        # histogram bins
-n_slice = 3         # slice image
+n_bin = 12  # histogram bins
+n_slice = 3  # slice image
 h_type = 'region'  # global or region
-d_type = 'd1'      # distance type
+d_type = 'd1'  # distance type
 
-depth = 3         # retrieved depth, set to None will count the ap for whole database
+depth = 3  # retrieved depth, set to None will count the ap for whole database
 
 ''' MMAP
      depth
@@ -83,13 +83,14 @@ class Color(object):
             type == 'region'
               a numpy array with size n_slice * n_slice * (n_bin ** channel)
         '''
+        global hist
         if isinstance(input, np.ndarray):  # examinate input type
             img = input.copy()
         else:
             img = imageio.imread(input, pilmode='RGB')
         height, width, channel = img.shape
         # slice bins equally for each channel
-        bins = np.linspace(0, 256, n_bin+1, endpoint=True)
+        bins = np.linspace(0, 256, n_bin + 1, endpoint=True)
 
         if type == 'global':
             hist = self._count_hist(img, n_bin, bins, channel)
@@ -97,13 +98,13 @@ class Color(object):
         elif type == 'region':
             hist = np.zeros((n_slice, n_slice, n_bin ** channel))
             h_silce = np.around(np.linspace(
-                0, height, n_slice+1, endpoint=True)).astype(int)
+                0, height, n_slice + 1, endpoint=True)).astype(int)
             w_slice = np.around(np.linspace(
-                0, width, n_slice+1, endpoint=True)).astype(int)
+                0, width, n_slice + 1, endpoint=True)).astype(int)
 
-            for hs in range(len(h_silce)-1):
-                for ws in range(len(w_slice)-1):
-                    img_r = img[h_silce[hs]:h_silce[hs+1], w_slice[ws]                                :w_slice[ws+1]]  # slice img to regions
+            for hs in range(len(h_silce) - 1):
+                for ws in range(len(w_slice) - 1):
+                    img_r = img[h_silce[hs]:h_silce[hs + 1], w_slice[ws]:w_slice[ws + 1]]  # slice img to regions
                     hist[hs][ws] = self._count_hist(
                         img_r, n_bin, bins, channel)
 
@@ -119,8 +120,8 @@ class Color(object):
         hist = np.zeros(n_bin ** channel)
 
         # cluster every pixels
-        for idx in range(len(bins)-1):
-            img[(input >= bins[idx]) & (input < bins[idx+1])] = idx
+        for idx in range(len(bins) - 1):
+            img[(input >= bins[idx]) & (input < bins[idx + 1])] = idx
         # add pixels into bins
         height, width, _ = img.shape
         for h in range(height):
@@ -131,6 +132,7 @@ class Color(object):
         return hist
 
     def make_samples(self, db, verbose=True):
+        global sample_cache
         if h_type == 'global':
             sample_cache = "histogram_cache-{}-n_bin{}".format(h_type, n_bin)
         elif h_type == 'region':
@@ -154,8 +156,8 @@ class Color(object):
                 d_hist = self.histogram(
                     d_img, type=h_type, n_bin=n_bin, n_slice=n_slice)
                 samples.append({
-                    'img':  d_img,
-                    'cls':  d_cls,
+                    'img': d_img,
+                    'cls': d_cls,
                     'hist': d_hist
                 })
             cPickle.dump(samples, open(os.path.join(
