@@ -6,23 +6,21 @@ import os
 
 import pandas as pd
 
-DB_dir = '../databaseDataSet/train'  # or DB_dir = 'databaseDataSet/train'
-DB_csv = '../data_train.csv'  # or DB_csv = 'data_train.csv'
-
-
 class Database(object):
 
-    def __init__(self):
+    def __init__(self, DB_dir, DB_csv):
+        self.DB_dir = DB_dir
+        self.DB_csv = DB_csv
         self._gen_csv()
         self.data = pd.read_csv(DB_csv)
         self.classes = set(self.data["cls"])
 
     def _gen_csv(self):
-        if os.path.exists(DB_csv):
+        if os.path.exists(self.DB_csv):
             return
-        with open(DB_csv, 'w', encoding='UTF-8') as f:
+        with open(self.DB_csv, 'w', encoding='UTF-8') as f:
             f.write("img,cls")
-            for root, _, files in os.walk(DB_dir, topdown=False):
+            for root, _, files in os.walk(self.DB_dir, topdown=False):
                 cls = root.split('/')[-1]
                 for name in files:
                     if not name.endswith('.jpg'):
@@ -41,9 +39,14 @@ class Database(object):
 
 
 if __name__ == "__main__":
-    db = Database()
-    data = db.get_data()
-    classes = db.get_class()
+    dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+    dataTrain = dbTrain.get_data()
+    classesTrain = dbTrain.get_class()
+    print("DB length:", len(dbTrain))
+    print(classesTrain)
 
-    print("DB length:", len(db))
-    print(classes)
+    dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
+    dataVal = dbVal.get_data()
+    classesVal = dbVal.get_class()
+    print("DB length:", len(dbVal))
+    print(classesVal)

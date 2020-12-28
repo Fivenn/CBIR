@@ -139,6 +139,6 @@ cython_debug/
 
 # Other
 cache/
-database/
+CorelDB/
 *.csv
-databaseDataSet/
+CorelDBDataSet/
