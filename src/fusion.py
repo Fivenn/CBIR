@@ -17,11 +17,10 @@ import numpy as np
 import itertools
 import os
 
-
 d_type   = 'd1'
 depth    = 30
 
-feat_pools = ['color', 'daisy', 'edge', 'gabor', 'hog', 'vgg', 'res']
+feat_pools = ['color', 'daisy']
 
 # result dir
 result_dir = 'result'
@@ -116,29 +115,29 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
 
 
 if __name__ == "__main__":
-  db = Database()
+  dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
 
   # evaluate features double-wise
-  evaluate_feats(db, N=2, d_type='d1')
+  evaluate_feats(dbTrain, N=2, d_type='d1')
 
   # evaluate features triple-wise
-  evaluate_feats(db, N=3, d_type='d1')
+  evaluate_feats(dbTrain, N=3, d_type='d1')
   
   # evaluate features quadra-wise
-  evaluate_feats(db, N=4, d_type='d1')
+  evaluate_feats(dbTrain, N=4, d_type='d1')
 
   # evaluate features penta-wise
-  evaluate_feats(db, N=5, d_type='d1')
+  evaluate_feats(dbTrain, N=5, d_type='d1')
 
   # evaluate features hexa-wise
-  evaluate_feats(db, N=6, d_type='d1')
+  evaluate_feats(dbTrain, N=6, d_type='d1')
 
   # evaluate features hepta-wise
-  evaluate_feats(db, N=7, d_type='d1')
+  evaluate_feats(dbTrain, N=7, d_type='d1')
   
   # evaluate database
   fusion = FeatureFusion(features=['color', 'daisy'])
-  APs = evaluate_class(db, f_instance=fusion, d_type=d_type, depth=depth)
+  APs = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
   cls_MAPs = []
   for cls, cls_APs in APs.items():
     MAP = np.mean(cls_APs)

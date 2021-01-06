@@ -87,7 +87,7 @@ class Color(object):
         if isinstance(input, np.ndarray):  # examinate input type
             img = input.copy()
         else:
-            img = imageio.imread(input, pilmode='RGB')
+            img = imageio.imread(input)
         height, width, channel = img.shape
         # slice bins equally for each channel
         bins = np.linspace(0, 256, n_bin + 1, endpoint=True)
@@ -167,8 +167,10 @@ class Color(object):
 
 
 if __name__ == "__main__":
-    db = Database()
-    data = db.get_data()
+    dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+    dataTrain = dbTrain.get_data()
+    dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
+    dataVal = dbVal.get_data()
     color = Color()
 
     # # test normalize
@@ -201,7 +203,7 @@ if __name__ == "__main__":
     # assert distance(hist, hist2, d_type='d2-norm') == 2, "d2 implement failed"
 
     # evaluate database
-    APs = evaluate_class(db, f_class=Color, d_type=d_type, depth=depth)
+    APs = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
     cls_MAPs = []
     for cls, cls_APs in APs.items():
         MAP = np.mean(cls_APs)

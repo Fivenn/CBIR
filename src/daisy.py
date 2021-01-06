@@ -10,7 +10,7 @@ from skimage import color
 
 from six.moves import cPickle
 import numpy as np
-import scipy.misc
+import imageio
 import math
 
 import os
@@ -19,7 +19,7 @@ import os
 n_slice    = 2
 n_orient   = 8
 step       = 10
-radius     = 30
+radius     = 15
 rings      = 2
 histograms = 6
 h_type     = 'region'
@@ -79,7 +79,7 @@ class Daisy(object):
     if isinstance(input, np.ndarray):  # examinate input type
       img = input.copy()
     else:
-      img = scipy.misc.imread(input, mode='RGB')
+      img = imageio.imread(input)
     height, width, channel = img.shape
   
     P = math.ceil((height - radius*2) / step) 
@@ -149,10 +149,13 @@ class Daisy(object):
 
 
 if __name__ == "__main__":
-  db = Database()
+  dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+  dataTrain = dbTrain.get_data()
+  dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
+  dataVal = dbVal.get_data()
 
   # evaluate database
-  APs = evaluate_class(db, f_class=Daisy, d_type=d_type, depth=depth)
+  APs = evaluate_class(dbTrain, f_class=Daisy, d_type=d_type, depth=depth)
   cls_MAPs = []
   for cls, cls_APs in APs.items():
     MAP = np.mean(cls_APs)
