@@ -3,6 +3,7 @@
 from __future__ import print_function
 
 from evaluate import evaluate_class
+from evaluateClassification import evaluate_class
 from DB import Database
 
 from color import Color
@@ -23,7 +24,7 @@ depth = 30
 feat_pools = ['color', 'daisy']
 
 # result dir
-result_dir = 'result'
+result_dir = './result'
 if not os.path.exists(result_dir):
     os.makedirs(result_dir)
 
@@ -115,32 +116,29 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
 
 
 if __name__ == "__main__":
+    print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
+
     dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+    dataTrain = dbTrain.get_data()
 
-    # evaluate features double-wise
-    evaluate_feats(dbTrain, N=2, d_type='d1')
+    dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
+    dataVal = dbTrain.get_data()
 
-    # evaluate features triple-wise
-    evaluate_feats(dbTrain, N=3, d_type='d1')
+    dbTest = Database(DB_dir="../CorelDBDataSet/test", DB_csv="../CorelDBDataSetTest.csv")
+    dataTest = dbTest.get_data()
 
-    # evaluate features quadra-wise
-    evaluate_feats(dbTrain, N=4, d_type='d1')
-
-    # evaluate features penta-wise
-    evaluate_feats(dbTrain, N=5, d_type='d1')
-
-    # evaluate features hexa-wise
-    evaluate_feats(dbTrain, N=6, d_type='d1')
-
-    # evaluate features hepta-wise
-    evaluate_feats(dbTrain, N=7, d_type='d1')
 
     # evaluate database
+    # fusion = FeatureFusion(features=['color', 'daisy'])
+    # APs = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
+    # cls_MAPs = []
+    # for cls, cls_APs in APs.items():
+    #     MAP = np.mean(cls_APs)
+    #     print("Class {}, MAP {}".format(cls, MAP))
+    #     cls_MAPs.append(MAP)
+    # print("MMAP", np.mean(cls_MAPs))
+
     fusion = FeatureFusion(features=['color', 'daisy'])
-    APs = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
-    cls_MAPs = []
-    for cls, cls_APs in APs.items():
-        MAP = np.mean(cls_APs)
-        print("Class {}, MAP {}".format(cls, MAP))
-        cls_MAPs.append(MAP)
-    print("MMAP", np.mean(cls_MAPs))
+    result = evaluate_class(dbTest, f_instance=fusion, d_type=d_type, depth=depth)
+
+    print("{} classes classées sur {} disponibles".format(result[0], result[1]))
