@@ -6,6 +6,7 @@ import os
 
 import pandas as pd
 
+
 class Database(object):
 
     def __init__(self, DB_dir, DB_csv):
