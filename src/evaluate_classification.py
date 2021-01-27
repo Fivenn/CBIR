@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-class Evaluation(object):
+class EvaluateClassification(object):
 
     def make_samples(self):
         raise NotImplementedError("Needs to implemented this method")
@@ -88,7 +88,7 @@ def evaluate_class(db, f_class=None, f_instance=None, depth=None, d_type='d1'):
     ok = 0
     for query in samples:
         result = infer(query, samples=samples, depth=depth, d_type=d_type)
-        if(query['cls'] == result[0]['cls']):
+        if (query['cls'] == result[0]['cls']):
             ok += 1
 
     return ok, len(samples)

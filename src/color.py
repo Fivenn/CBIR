@@ -11,7 +11,7 @@ from six.moves import cPickle
 
 from DB import Database
 from evaluate import evaluate_class
-from evaluateClassification import evaluate_class
+from evaluate_classification import evaluate_class
 
 # configs for histogram
 n_bin = 12  # histogram bins

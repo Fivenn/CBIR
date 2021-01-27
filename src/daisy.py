@@ -3,7 +3,7 @@
 from __future__ import print_function
 
 from evaluate import evaluate_class
-from evaluateClassification import evaluate_class
+from evaluate_classification import evaluate_class
 from DB import Database
 
 from skimage.feature import daisy

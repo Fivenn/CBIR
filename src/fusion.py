@@ -3,7 +3,7 @@
 from __future__ import print_function
 
 from evaluate import evaluate_class
-from evaluateClassification import evaluate_class
+from evaluate_classification import evaluate_class
 from DB import Database
 
 from color import Color
@@ -139,6 +139,6 @@ if __name__ == "__main__":
     # print("MMAP", np.mean(cls_MAPs))
 
     fusion = FeatureFusion(features=['color', 'daisy'])
-    result = evaluate_class(dbTest, f_instance=fusion, d_type=d_type, depth=depth)
+    result = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
 
     print("{} classes classées sur {} disponibles".format(result[0], result[1]))
