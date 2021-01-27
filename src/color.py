@@ -10,7 +10,6 @@ import numpy as np
 from six.moves import cPickle
 
 from DB import Database
-from evaluate import evaluate_class
 from evaluate_classification import evaluate_class
 
 # configs for histogram
@@ -222,4 +221,3 @@ if __name__ == "__main__":
     result = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
 
     print("{} classes classées sur {} disponibles".format(result[0], result[1]))
-
