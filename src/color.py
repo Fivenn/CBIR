@@ -10,7 +10,7 @@ import numpy as np
 from six.moves import cPickle
 
 from DB import Database
-from evaluate import evaluate_class
+from evaluate_classification import evaluate_class
 
 # configs for histogram
 n_bin = 12  # histogram bins
@@ -167,10 +167,17 @@ class Color(object):
 
 
 if __name__ == "__main__":
-    dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+    print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
+
+    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
-    dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
-    dataVal = dbVal.get_data()
+
+    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
+    dataVal = dbTrain.get_data()
+
+    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
+    dataTest = dbTest.get_data()
+
     color = Color()
 
     # # test normalize
@@ -202,11 +209,15 @@ if __name__ == "__main__":
     # assert distance(hist, hist2, d_type='d1') == 2, "d1 implement failed"
     # assert distance(hist, hist2, d_type='d2-norm') == 2, "d2 implement failed"
 
-    # evaluate database
-    APs = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
-    cls_MAPs = []
-    for cls, cls_APs in APs.items():
-        MAP = np.mean(cls_APs)
-        print("Class {}, MAP {}".format(cls, MAP))
-        cls_MAPs.append(MAP)
-    print("MMAP", np.mean(cls_MAPs))
+    # evaluate train database
+    # APs = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
+    # cls_MAPs = []
+    # for cls, cls_APs in APs.items():
+    #     MAP = np.mean(cls_APs)
+    #     print("Class {}, MAP {}".format(cls, MAP))
+    #     cls_MAPs.append(MAP)
+    # print("MMAP", np.mean(cls_MAPs))
+
+    result = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
+
+    print("{} classes classées sur {} disponibles".format(result[0], result[1]))
