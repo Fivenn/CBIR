@@ -118,13 +118,13 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
 if __name__ == "__main__":
     print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
 
-    dbTrain = Database(DB_dir="../CorelDBDataSet/train", DB_csv="../CorelDBDataSetTrain.csv")
+    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
 
-    dbVal = Database(DB_dir="../CorelDBDataSet/val", DB_csv="../CorelDBDataSetVal.csv")
+    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
     dataVal = dbTrain.get_data()
 
-    dbTest = Database(DB_dir="../CorelDBDataSet/test", DB_csv="../CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
 
 

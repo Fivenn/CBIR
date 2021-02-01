@@ -11,14 +11,14 @@ from keras.utils.np_utils import to_categorical
 
 from DB import Database
 
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True' # Only for MacOS 12.0 and higher
 
 # dimensions of our images.
 img_width, img_height = 120, 80
 
-top_model_weights_path = 'bottleneck_fc_model.h5'
-train_data_dir = '../CorelDBDataSet/train'
-validation_data_dir = '../CorelDBDataSet/val'
+top_model_weights_path = 'src/cache/bottleneck_fc_model.h5'
+train_data_dir = 'CorelDBDataSet/train'
+validation_data_dir = 'CorelDBDataSet/val'
 
 # number of epochs to train top model
 epochs = 30
@@ -51,7 +51,7 @@ def save_bottlebeck_features():
     bottleneck_features_train = model.predict_generator(
         generator, predict_size_train)
 
-    np.save('bottleneck_features_train.npy', bottleneck_features_train)
+    np.save('src/cache/bottleneck_features_train.npy', bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
         validation_data_dir,
@@ -68,7 +68,7 @@ def save_bottlebeck_features():
     bottleneck_features_validation = model.predict_generator(
         generator, predict_size_validation)
 
-    np.save('bottleneck_features_validation.npy',
+    np.save('src/cache/bottleneck_features_validation.npy',
             bottleneck_features_validation)
 
 
@@ -85,10 +85,10 @@ def train_top_model():
     num_classes = len(generator_top.class_indices)
 
     # save the class indices to use use later in predictions
-    np.save('class_indices.npy', generator_top.class_indices)
+    np.save('src/cache/class_indices.npy', generator_top.class_indices)
 
     # load the bottleneck features saved earlier
-    train_data = np.load('bottleneck_features_train.npy')
+    train_data = np.load('src/cache/bottleneck_features_train.npy')
 
     # get the class lebels for the training data, in the original order
     train_labels = generator_top.classes
@@ -106,7 +106,7 @@ def train_top_model():
 
     nb_validation_samples = len(generator_top.filenames)
 
-    validation_data = np.load('bottleneck_features_validation.npy')
+    validation_data = np.load('src/cache/bottleneck_features_validation.npy')
 
     validation_labels = generator_top.classes
     validation_labels = to_categorical(
@@ -160,12 +160,12 @@ def train_top_model():
 
 def predict():
     # load the class_indices saved in the earlier step
-    class_dictionary = np.load('./class_indices.npy', allow_pickle=True).item()
+    class_dictionary = np.load('src/cache/class_indices.npy', allow_pickle=True).item()
 
     num_classes = len(class_dictionary)
 
     # add the path to your test image below
-    dbTest = Database(DB_dir="../CorelDBDataSet/test", DB_csv="../CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
 
     for image_path in dbTest.get_data().img:
         print("[INFO] loading and preprocessing image...")
@@ -192,11 +192,8 @@ def predict():
 
         model.load_weights(top_model_weights_path)
 
-        # use the bottleneck prediction on the top model to get the final
-        # classification
+        # use the bottleneck prediction on the top model to get the final classification
         class_predicted = model.predict_classes(bottleneck_prediction)
-
-        # probabilities = model.predict_proba(bottleneck_prediction)
 
         inID = class_predicted[0]
 
@@ -204,11 +201,11 @@ def predict():
 
         label = inv_map[inID]
 
-        # get the prediction label
-        print("Image: {}, Label: {}".format(image_path, label))
+        # get the predicted label
+        print("Image: {}, Predicted label: {}".format(image_path, label))
 
 
 if __name__ == "__main__":
-    # save_bottlebeck_features()
-    # train_top_model()
+    save_bottlebeck_features()
+    train_top_model()
     predict()
