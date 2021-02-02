@@ -14,6 +14,16 @@ class EvaluateClassification(object):
 
 
 def distance(v1, v2, d_type='d1'):
+    ''' Calculates the distance between two vectors according to a distance type.
+        arguments
+            v1     : The first vector used to calculate distance
+            v2     : The second vector used to calculate distance
+            d_type : The type of distance to be calculated
+
+        return
+            The distance between two vectors, depending on the type of distance selected
+
+    '''
     assert v1.shape == v2.shape, "shape of two vectors need to be same!"
 
     if d_type == 'd1':
@@ -41,6 +51,13 @@ def distance(v1, v2, d_type='d1'):
 
 
 def weightDistance(results):
+    ''' Calculate a weight corresponding to the calculation of the average distance for each class.
+    argument
+        results : The distances between a query and samples
+
+    return
+        averageClassDistance : A weight corresponding to the calculation of the average distance for each class.
+    '''
     resultsDataFrameGroups = pd.DataFrame(results).groupby("cls")
     averageClassDistance = []
 
@@ -51,14 +68,36 @@ def weightDistance(results):
 
 
 def infer(query, samples=None, db=None, sample_db_fn=None, depth=None, d_type='d1'):
+    ''' Infer a query and return its weighted distance
+        arguments
+            query        : A dictionnary with 3 keys
+                {
+                    img  : path of image,
+                    cls  : class of image
+                    hist : histogram of image
+                }
+            samples      : A list of dictionnary
+                {
+                    img  : path of image,
+                    cls  : class of image
+                    hist : histogram of image
+                }
+            db           : An instance of DB class
+            sample_db_fn : A function making samples from DB instance 
+            depth        : Retrieved depth during inference, by default, it is equal to DB size
+            dtype        : The type of distance to be calculated
+
+        return
+            weightedDistance : The weighted distance of a query infered from the samples
+    '''
     assert samples != None or (
             db != None and sample_db_fn != None), "need to give either samples or db plus sample_db_fn"
     if db:
         samples = sample_db_fn(db)
 
-    q_img, q_cls, q_hist = query['img'], query['cls'], query['hist']
+    q_img, q_hist = query['img'], query['hist']
     results = []
-    for idx, sample in enumerate(samples):
+    for _, sample in enumerate(samples):
         s_img, s_cls, s_hist = sample['img'], sample['cls'], sample['hist']
         if q_img == s_img:
             continue
@@ -75,11 +114,20 @@ def infer(query, samples=None, db=None, sample_db_fn=None, depth=None, d_type='d
 
 
 def evaluate_class(db, f_class=None, f_instance=None, depth=None, d_type='d1'):
+    ''' Evaluates each image in the database in order to infer a class according to the chosen feature.
+        arguments
+            db         : an instance of DB class
+            f_class    : A class that generate features, used to generate samples
+            f_instance : A instance that generate features, used to generate samples
+            depth      : Retrieved depth during inference, by default, it is equal to DB size
+            d_type     : distance type to be calculated
+
+        returns
+            ok           : The number of classes classified according to a feature
+            len(samples) : The number of samples processed
+    '''
     assert f_class or f_instance, "needs to give class_name or an instance of class"
-
-    classes = db.get_class()
-    ret = {c: [] for c in classes}
-
+    
     if f_class:
         f = f_class()
     elif f_instance:

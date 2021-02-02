@@ -1,3 +1,15 @@
+'''
+Using Bottleneck Features for Multi-Class CLassification in Keras
+
+Using VGG16 network plus a Fully-connected classifier as a top model of this network
+
+We use this technique to build powerful and high accuracy Image Classificatiion systems with small amount of training data and without overfitting.
+
+Source
+https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+https://www.codesofinterest.com/2017/08/bottleneck-features-multi-class-classification-keras.html
+'''
+
 import math
 import os
 
@@ -13,7 +25,7 @@ from DB import Database
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True' # Only for MacOS 12.0 and higher
 
-# dimensions of our images.
+# dimensions of the images.
 img_width, img_height = 120, 80
 
 top_model_weights_path = 'src/cache/bottleneck_fc_model.h5'
@@ -26,7 +38,10 @@ epochs = 30
 batch_size = 16
 
 
-def save_bottlebeck_features():
+def save_bottleneck_features():
+    ''' Save the bottleneck features from the VGG16 model.
+    In this function, we create the VGG16 model without the top model (fully-connected layers).
+    '''
     # build the VGG16 network
     model = applications.VGG16(include_top=False, weights='imagenet')
 
@@ -73,6 +88,11 @@ def save_bottlebeck_features():
 
 
 def train_top_model():
+    ''' Train the top model of the VGG16 network (fully-connected classifier).
+    In order to train the top model, we need the class labels for each of the training/validation samples.
+    We use a data generator for that also.
+    We also need to convert the labels to categorical vectors.
+    '''
     datagen_top = ImageDataGenerator(rescale=1. / 255)
     generator_top = datagen_top.flow_from_directory(
         train_data_dir,
@@ -93,7 +113,6 @@ def train_top_model():
     # get the class lebels for the training data, in the original order
     train_labels = generator_top.classes
 
-    # https://github.com/fchollet/keras/issues/3467
     # convert the training labels to categorical vectors
     train_labels = to_categorical(train_labels, num_classes=num_classes)
 
@@ -134,6 +153,9 @@ def train_top_model():
     print("[INFO] accuracy: {:.2f}%".format(eval_accuracy * 100))
     print("[INFO] Loss: {}".format(eval_loss))
 
+    # draw the history for accuracy and loss of training and validation
+    #
+
     plt.figure(1)
 
     # summarize history for accuracy
@@ -159,6 +181,9 @@ def train_top_model():
 
 
 def predict():
+    ''' Predict the class of an image.
+    We need to run it through the same pipeline as before (run the image through the pre-trained VGG16 model and then run the bottleneck prediction through the trained top model).
+    '''
     # load the class_indices saved in the earlier step
     class_dictionary = np.load('src/cache/class_indices.npy', allow_pickle=True).item()
 
@@ -206,6 +231,6 @@ def predict():
 
 
 if __name__ == "__main__":
-    save_bottlebeck_features()
+    save_bottleneck_features()
     train_top_model()
     predict()

@@ -24,7 +24,7 @@ depth = 30
 feat_pools = ['color', 'daisy']
 
 # result dir
-result_dir = './result'
+result_dir = 'result'
 if not os.path.exists(result_dir):
     os.makedirs(result_dir)
 
@@ -105,7 +105,7 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
         for d in depths:
             APs = evaluate_class(db, f_instance=fusion, d_type=d_type, depth=d)
             cls_MAPs = []
-            for cls, cls_APs in APs.items():
+            for cls_APs in APs:
                 MAP = np.mean(cls_APs)
                 cls_MAPs.append(MAP)
             r = "{},{},{},{}".format(",".join(combination), d, d_type, np.mean(cls_MAPs))
@@ -126,17 +126,6 @@ if __name__ == "__main__":
 
     dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
-
-
-    # evaluate database
-    # fusion = FeatureFusion(features=['color', 'daisy'])
-    # APs = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
-    # cls_MAPs = []
-    # for cls, cls_APs in APs.items():
-    #     MAP = np.mean(cls_APs)
-    #     print("Class {}, MAP {}".format(cls, MAP))
-    #     cls_MAPs.append(MAP)
-    # print("MMAP", np.mean(cls_MAPs))
 
     fusion = FeatureFusion(features=['color', 'daisy'])
     result = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)

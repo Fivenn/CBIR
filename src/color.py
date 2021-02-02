@@ -180,44 +180,6 @@ if __name__ == "__main__":
 
     color = Color()
 
-    # # test normalize
-    # hist = color.histogram(data.iloc[0, 0], type='global')
-    # assert hist.sum() - 1 < 1e-9, "normalize false"
-    #
-    # # test histogram bins
-    # def sigmoid(z):
-    #     a = 1.0 / (1.0 + np.exp(-1. * z))
-    #     return a
-    # np.random.seed(0)
-    # IMG = sigmoid(np.random.randn(2, 2, 3)) * 255
-    # IMG = IMG.astype(int)
-    # hist = color.histogram(IMG, type='global', n_bin=4)
-    # assert np.equal(np.where(hist > 0)[0], np.array(
-    #     [37, 43, 58, 61])).all(), "global histogram implement failed"
-    # hist = color.histogram(IMG, type='region', n_bin=4, n_slice=2)
-    # assert np.equal(np.where(hist > 0)[0], np.array(
-    #     [58, 125, 165, 235])).all(), "region histogram implement failed"
-
-    # # examinate distance
-    # np.random.seed(1)
-    # IMG = sigmoid(np.random.randn(4, 4, 3)) * 255
-    # IMG = IMG.astype(int)
-    # hist = color.histogram(IMG, type='region', n_bin=4, n_slice=2)
-    # IMG2 = sigmoid(np.random.randn(4, 4, 3)) * 255
-    # IMG2 = IMG2.astype(int)
-    # hist2 = color.histogram(IMG2, type='region', n_bin=4, n_slice=2)
-    # assert distance(hist, hist2, d_type='d1') == 2, "d1 implement failed"
-    # assert distance(hist, hist2, d_type='d2-norm') == 2, "d2 implement failed"
-
-    # evaluate train database
-    # APs = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
-    # cls_MAPs = []
-    # for cls, cls_APs in APs.items():
-    #     MAP = np.mean(cls_APs)
-    #     print("Class {}, MAP {}".format(cls, MAP))
-    #     cls_MAPs.append(MAP)
-    # print("MMAP", np.mean(cls_MAPs))
-
     result = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
 
     print("{} classes classées sur {} disponibles".format(result[0], result[1]))

@@ -51,7 +51,7 @@ R = (rings * histograms + 1) * n_orient
 '''
 
 # cache dir
-cache_dir = './cache'
+cache_dir = 'cache'
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
@@ -80,7 +80,7 @@ class Daisy(object):
             img = input.copy()
         else:
             img = imageio.imread(input)
-        height, width, channel = img.shape
+        height, width = img.shape
 
         P = math.ceil((height - radius * 2) / step)
         Q = math.ceil((width - radius * 2) / step)
@@ -161,15 +161,6 @@ if __name__ == "__main__":
 
     dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
-
-    # evaluate database
-    # APs = evaluate_class(dbTrain, f_class=Daisy, d_type=d_type, depth=depth)
-    # cls_MAPs = []
-    # for cls, cls_APs in APs.items():
-    #     MAP = np.mean(cls_APs)
-    #     print("Class {}, MAP {}".format(cls, MAP))
-    #     cls_MAPs.append(MAP)
-    # print("MMAP", np.mean(cls_MAPs))
 
     result = evaluate_class(dbTrain, f_class=Daisy, d_type=d_type, depth=depth)
 
