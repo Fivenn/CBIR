@@ -91,12 +91,16 @@ class Daisy(object):
 
         elif type == 'region':
             hist = np.zeros((n_slice, n_slice, R))
-            h_silce = np.around(np.linspace(0, height, n_slice + 1, endpoint=True)).astype(int)
-            w_slice = np.around(np.linspace(0, width, n_slice + 1, endpoint=True)).astype(int)
+            h_silce = np.around(np.linspace(
+                0, height, n_slice + 1, endpoint=True)).astype(int)
+            w_slice = np.around(np.linspace(
+                0, width, n_slice + 1, endpoint=True)).astype(int)
 
             for hs in range(len(h_silce) - 1):
                 for ws in range(len(w_slice) - 1):
-                    img_r = img[h_silce[hs]:h_silce[hs + 1], w_slice[ws]:w_slice[ws + 1]]  # slice img to regions
+                    # slice img to regions
+                    img_r = img[h_silce[hs]:h_silce[hs + 1],
+                                w_slice[ws]:w_slice[ws + 1]]
                     hist[hs][ws] = self._daisy(img_r)
 
         if normalize:
@@ -106,7 +110,8 @@ class Daisy(object):
 
     def _daisy(self, img, normalize=True):
         image = color.rgb2gray(img)
-        descs = daisy(image, step=step, radius=radius, rings=rings, histograms=histograms, orientations=n_orient)
+        descs = daisy(image, step=step, radius=radius, rings=rings,
+                      histograms=histograms, orientations=n_orient)
         descs = descs.reshape(-1, R)  # shape=(N, R)
         hist = np.mean(descs, axis=0)  # shape=(R,)
 
@@ -126,14 +131,17 @@ class Daisy(object):
                                                                                                        histograms)
 
         try:
-            samples = cPickle.load(open(os.path.join(cache_dir, sample_cache), "rb", True))
+            samples = cPickle.load(
+                open(os.path.join(cache_dir, sample_cache), "rb", True))
             for sample in samples:
                 sample['hist'] /= np.sum(sample['hist'])  # normalize
             if verbose:
-                print("Using cache..., config=%s, distance=%s, depth=%s" % (sample_cache, d_type, depth))
+                print("Using cache..., config=%s, distance=%s, depth=%s" %
+                      (sample_cache, d_type, depth))
         except:
             if verbose:
-                print("Counting histogram..., config=%s, distance=%s, depth=%s" % (sample_cache, d_type, depth))
+                print("Counting histogram..., config=%s, distance=%s, depth=%s" % (
+                    sample_cache, d_type, depth))
 
             samples = []
             data = db.get_data()
@@ -145,7 +153,8 @@ class Daisy(object):
                     'cls': d_cls,
                     'hist': d_hist
                 })
-            cPickle.dump(samples, open(os.path.join(cache_dir, sample_cache), "wb", True))
+            cPickle.dump(samples, open(os.path.join(
+                cache_dir, sample_cache), "wb", True))
 
         return samples
 
@@ -153,15 +162,19 @@ class Daisy(object):
 if __name__ == "__main__":
     print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
 
-    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
+    dbTrain = Database(DB_dir="CorelDBDataSet/train",
+                       DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
 
-    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
+    dbVal = Database(DB_dir="CorelDBDataSet/val",
+                     DB_csv="CorelDBDataSetVal.csv")
     dataVal = dbTrain.get_data()
 
-    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test",
+                      DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
 
     result = evaluate_class(dbTrain, f_class=Daisy, d_type=d_type, depth=depth)
 
-    print("{} classes classées sur {} disponibles".format(result[0], result[1]))
+    print("{} classes classées sur {} disponibles".format(
+        result[0], result[1]))

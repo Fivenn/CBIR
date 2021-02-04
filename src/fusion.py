@@ -76,7 +76,8 @@ class FeatureFusion(object):
                     delete_idx.append(idx)
                     continue
                 assert feat[key]['cls'] == samples[idx]['cls']
-                samples[idx]['hist'] = np.append(samples[idx]['hist'], feat[key]['hist'])
+                samples[idx]['hist'] = np.append(
+                    samples[idx]['hist'], feat[key]['hist'])
         for d_idx in sorted(set(delete_idx), reverse=True):
             del samples[d_idx]
         if delete_idx != []:
@@ -95,7 +96,8 @@ class FeatureFusion(object):
 
 
 def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300, 200, 100, 50, 30, 10, 5, 3, 1]):
-    result = open(os.path.join(result_dir, 'feature_fusion-{}-{}feats.csv'.format(d_type, N)), 'w')
+    result = open(os.path.join(
+        result_dir, 'feature_fusion-{}-{}feats.csv'.format(d_type, N)), 'w')
     for i in range(N):
         result.write("feat{},".format(i))
     result.write("depth,distance,MMAP")
@@ -108,7 +110,8 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
             for cls_APs in APs:
                 MAP = np.mean(cls_APs)
                 cls_MAPs.append(MAP)
-            r = "{},{},{},{}".format(",".join(combination), d, d_type, np.mean(cls_MAPs))
+            r = "{},{},{},{}".format(
+                ",".join(combination), d, d_type, np.mean(cls_MAPs))
             print(r)
             result.write('\n' + r)
         print()
@@ -118,16 +121,21 @@ def evaluate_feats(db, N, feat_pools=feat_pools, d_type='d1', depths=[None, 300,
 if __name__ == "__main__":
     print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
 
-    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
+    dbTrain = Database(DB_dir="CorelDBDataSet/train",
+                       DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
 
-    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
+    dbVal = Database(DB_dir="CorelDBDataSet/val",
+                     DB_csv="CorelDBDataSetVal.csv")
     dataVal = dbTrain.get_data()
 
-    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test",
+                      DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
 
     fusion = FeatureFusion(features=['color', 'daisy'])
-    result = evaluate_class(dbTrain, f_instance=fusion, d_type=d_type, depth=depth)
+    result = evaluate_class(dbTrain, f_instance=fusion,
+                            d_type=d_type, depth=depth)
 
-    print("{} classes classées sur {} disponibles".format(result[0], result[1]))
+    print("{} classes classées sur {} disponibles".format(
+        result[0], result[1]))

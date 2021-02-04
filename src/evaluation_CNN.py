@@ -23,7 +23,7 @@ from keras.utils.np_utils import to_categorical
 
 from DB import Database
 
-os.environ['KMP_DUPLICATE_LIB_OK'] = 'True' # Only for MacOS 12.0 and higher
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # Only for MacOS 12.0 and higher
 
 # dimensions of the images.
 img_width, img_height = 120, 80
@@ -54,10 +54,6 @@ def save_bottleneck_features():
         class_mode=None,
         shuffle=False)
 
-    print(len(generator.filenames))
-    print(generator.class_indices)
-    print(len(generator.class_indices))
-
     nb_train_samples = len(generator.filenames)
     num_classes = len(generator.class_indices)
 
@@ -66,7 +62,8 @@ def save_bottleneck_features():
     bottleneck_features_train = model.predict_generator(
         generator, predict_size_train)
 
-    np.save('src/cache/bottleneck_features_train.npy', bottleneck_features_train)
+    np.save('src/cache/bottleneck_features_train.npy',
+            bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
         validation_data_dir,
@@ -166,7 +163,7 @@ def train_top_model():
     plt.title('model accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train', 'validation'], loc='upper left')
 
     # summarize history for loss
 
@@ -176,7 +173,7 @@ def train_top_model():
     plt.title('model loss')
     plt.ylabel('loss')
     plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
+    plt.legend(['train', 'validation'], loc='upper left')
     plt.show()
 
 
@@ -185,15 +182,17 @@ def predict():
     We need to run it through the same pipeline as before (run the image through the pre-trained VGG16 model and then run the bottleneck prediction through the trained top model).
     '''
     # load the class_indices saved in the earlier step
-    class_dictionary = np.load('src/cache/class_indices.npy', allow_pickle=True).item()
+    class_dictionary = np.load(
+        'src/cache/class_indices.npy', allow_pickle=True).item()
 
     num_classes = len(class_dictionary)
 
     # add the path to your test image below
-    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test",
+                      DB_csv="CorelDBDataSetTest.csv")
 
+    print("[INFO] loading and preprocessing image...")
     for image_path in dbTest.get_data().img:
-        print("[INFO] loading and preprocessing image...")
         image = load_img(image_path, target_size=(img_width, img_height))
         image = img_to_array(image)
 
@@ -226,8 +225,11 @@ def predict():
 
         label = inv_map[inID]
 
+        probabilities = model.predict_proba(bottleneck_prediction)[0][inID]
+
         # get the predicted label
-        print("Image: {}, Predicted label: {}".format(image_path, label))
+        print("Image: {}, Predicted label: {}, Probability: {}".format(
+            image_path, label, probabilities))
 
 
 if __name__ == "__main__":

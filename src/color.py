@@ -104,7 +104,9 @@ class Color(object):
 
             for hs in range(len(h_silce) - 1):
                 for ws in range(len(w_slice) - 1):
-                    img_r = img[h_silce[hs]:h_silce[hs + 1], w_slice[ws]:w_slice[ws + 1]]  # slice img to regions
+                    # slice img to regions
+                    img_r = img[h_silce[hs]:h_silce[hs + 1],
+                                w_slice[ws]:w_slice[ws + 1]]
                     hist[hs][ws] = self._count_hist(
                         img_r, n_bin, bins, channel)
 
@@ -169,17 +171,21 @@ class Color(object):
 if __name__ == "__main__":
     print("Pensez à supprimer le dossier cache dans le cas où vous utilisez des nouvelles données.\n")
 
-    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
+    dbTrain = Database(DB_dir="CorelDBDataSet/train",
+                       DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
 
-    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
+    dbVal = Database(DB_dir="CorelDBDataSet/val",
+                     DB_csv="CorelDBDataSetVal.csv")
     dataVal = dbTrain.get_data()
 
-    dbTest = Database(DB_dir="CorelDBDataSet/test", DB_csv="CorelDBDataSetTest.csv")
+    dbTest = Database(DB_dir="CorelDBDataSet/test",
+                      DB_csv="CorelDBDataSetTest.csv")
     dataTest = dbTest.get_data()
 
     color = Color()
 
     result = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
 
-    print("{} classes classées sur {} disponibles".format(result[0], result[1]))
+    print("{} classes classées sur {} disponibles".format(
+        result[0], result[1]))

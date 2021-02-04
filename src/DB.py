@@ -40,13 +40,15 @@ class Database(object):
 
 
 if __name__ == "__main__":
-    dbTrain = Database(DB_dir="CorelDBDataSet/train", DB_csv="CorelDBDataSetTrain.csv")
+    dbTrain = Database(DB_dir="CorelDBDataSet/train",
+                       DB_csv="CorelDBDataSetTrain.csv")
     dataTrain = dbTrain.get_data()
     classesTrain = dbTrain.get_class()
     print("DB length:", len(dbTrain))
     print(classesTrain)
 
-    dbVal = Database(DB_dir="CorelDBDataSet/val", DB_csv="CorelDBDataSetVal.csv")
+    dbVal = Database(DB_dir="CorelDBDataSet/val",
+                     DB_csv="CorelDBDataSetVal.csv")
     dataVal = dbVal.get_data()
     classesVal = dbVal.get_class()
     print("DB length:", len(dbVal))
