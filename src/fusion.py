@@ -113,7 +113,7 @@ if __name__ == "__main__":
                        DB_csv="CorelDBDataSetTrain.csv")
 
     fusion = FeatureFusion(features=['color', 'daisy'])
-    
+
     result = evaluate_class(dbTrain, f_instance=fusion,
                             d_type=d_type, depth=depth)
 

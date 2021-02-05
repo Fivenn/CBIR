@@ -51,7 +51,7 @@ R = (rings * histograms + 1) * n_orient
 '''
 
 # cache dir
-cache_dir = 'cache'
+cache_dir = './cache'
 if not os.path.exists(cache_dir):
     os.makedirs(cache_dir)
 
@@ -80,7 +80,7 @@ class Daisy(object):
             img = input.copy()
         else:
             img = imageio.imread(input)
-        height, width = img.shape
+        height, width, channel = img.shape
 
         P = math.ceil((height - radius * 2) / step)
         Q = math.ceil((width - radius * 2) / step)
@@ -164,15 +164,6 @@ if __name__ == "__main__":
 
     dbTrain = Database(DB_dir="CorelDBDataSet/train",
                        DB_csv="CorelDBDataSetTrain.csv")
-    dataTrain = dbTrain.get_data()
-
-    dbVal = Database(DB_dir="CorelDBDataSet/val",
-                     DB_csv="CorelDBDataSetVal.csv")
-    dataVal = dbTrain.get_data()
-
-    dbTest = Database(DB_dir="CorelDBDataSet/test",
-                      DB_csv="CorelDBDataSetTest.csv")
-    dataTest = dbTest.get_data()
 
     result = evaluate_class(dbTrain, f_class=Daisy, d_type=d_type, depth=depth)
 
