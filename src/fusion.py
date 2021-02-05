@@ -11,8 +11,6 @@ from daisy import Daisy
 from edge import Edge
 from gabor import Gabor
 from HOG import HOG
-from vggnet import VGGNetFeat
-from resnet import ResNetFeat
 
 import numpy as np
 import itertools
@@ -53,16 +51,6 @@ class FeatureFusion(object):
             f_c = Color()
         elif f_class == 'daisy':
             f_c = Daisy()
-        elif f_class == 'edge':
-            f_c = Edge()
-        elif f_class == 'gabor':
-            f_c = Gabor()
-        elif f_class == 'hog':
-            f_c = HOG()
-        elif f_class == 'vgg':
-            f_c = VGGNetFeat()
-        elif f_class == 'res':
-            f_c = ResNetFeat()
         return f_c.make_samples(db, verbose=False)
 
     def _concat_feat(self, db, feats):
@@ -123,17 +111,9 @@ if __name__ == "__main__":
 
     dbTrain = Database(DB_dir="CorelDBDataSet/train",
                        DB_csv="CorelDBDataSetTrain.csv")
-    dataTrain = dbTrain.get_data()
-
-    dbVal = Database(DB_dir="CorelDBDataSet/val",
-                     DB_csv="CorelDBDataSetVal.csv")
-    dataVal = dbTrain.get_data()
-
-    dbTest = Database(DB_dir="CorelDBDataSet/test",
-                      DB_csv="CorelDBDataSetTest.csv")
-    dataTest = dbTest.get_data()
 
     fusion = FeatureFusion(features=['color', 'daisy'])
+    
     result = evaluate_class(dbTrain, f_instance=fusion,
                             d_type=d_type, depth=depth)
 

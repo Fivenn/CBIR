@@ -173,18 +173,7 @@ if __name__ == "__main__":
 
     dbTrain = Database(DB_dir="CorelDBDataSet/train",
                        DB_csv="CorelDBDataSetTrain.csv")
-    dataTrain = dbTrain.get_data()
-
-    dbVal = Database(DB_dir="CorelDBDataSet/val",
-                     DB_csv="CorelDBDataSetVal.csv")
-    dataVal = dbTrain.get_data()
-
-    dbTest = Database(DB_dir="CorelDBDataSet/test",
-                      DB_csv="CorelDBDataSetTest.csv")
-    dataTest = dbTest.get_data()
-
-    color = Color()
-
+                       
     result = evaluate_class(dbTrain, f_class=Color, d_type=d_type, depth=depth)
 
     print("{} classes classées sur {} disponibles".format(

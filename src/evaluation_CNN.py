@@ -25,10 +25,13 @@ from DB import Database
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # Only for MacOS 12.0 and higher
 
+if not os.path.exists('cache'):
+    os.makedirs('cache')
+
 # dimensions of the images.
 img_width, img_height = 120, 80
 
-top_model_weights_path = 'src/cache/bottleneck_fc_model.h5'
+top_model_weights_path = 'cache/bottleneck_fc_model.h5'
 train_data_dir = 'CorelDBDataSet/train'
 validation_data_dir = 'CorelDBDataSet/val'
 
@@ -62,7 +65,7 @@ def save_bottleneck_features():
     bottleneck_features_train = model.predict_generator(
         generator, predict_size_train)
 
-    np.save('src/cache/bottleneck_features_train.npy',
+    np.save('cache/bottleneck_features_train.npy',
             bottleneck_features_train)
 
     generator = datagen.flow_from_directory(
@@ -80,7 +83,7 @@ def save_bottleneck_features():
     bottleneck_features_validation = model.predict_generator(
         generator, predict_size_validation)
 
-    np.save('src/cache/bottleneck_features_validation.npy',
+    np.save('cache/bottleneck_features_validation.npy',
             bottleneck_features_validation)
 
 
@@ -102,10 +105,10 @@ def train_top_model():
     num_classes = len(generator_top.class_indices)
 
     # save the class indices to use use later in predictions
-    np.save('src/cache/class_indices.npy', generator_top.class_indices)
+    np.save('cache/class_indices.npy', generator_top.class_indices)
 
     # load the bottleneck features saved earlier
-    train_data = np.load('src/cache/bottleneck_features_train.npy')
+    train_data = np.load('cache/bottleneck_features_train.npy')
 
     # get the class lebels for the training data, in the original order
     train_labels = generator_top.classes
@@ -122,7 +125,7 @@ def train_top_model():
 
     nb_validation_samples = len(generator_top.filenames)
 
-    validation_data = np.load('src/cache/bottleneck_features_validation.npy')
+    validation_data = np.load('cache/bottleneck_features_validation.npy')
 
     validation_labels = generator_top.classes
     validation_labels = to_categorical(
@@ -183,7 +186,7 @@ def predict():
     '''
     # load the class_indices saved in the earlier step
     class_dictionary = np.load(
-        'src/cache/class_indices.npy', allow_pickle=True).item()
+        'cache/class_indices.npy', allow_pickle=True).item()
 
     num_classes = len(class_dictionary)
 

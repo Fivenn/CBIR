@@ -4,7 +4,7 @@ Pour tout ajout d'un répertoire contenant des données, faites attention à bie
 
 Pour séparer les données de votre base de données en 3 sous-ensembles en fonction d'un ratio, vous aurez besoin d'utiliser le script ```split.dataset.sh``` présent à la racine du projet. 
 
-Attention, pour faire fonctionner ce script, il est nécessaire d'avoir installé ```splitfolders``` sur votre machine. Pour cela, vous pouvez exécuter la commande ```pip install splitfolders```.
+Attention, pour faire fonctionner ce script, il est nécessaire d'avoir installé ```splitfolders``` sur votre machine. Pour cela, vous pouvez exécuter la commande ```pip install split-folders```.
 
 Voici à quoi doit ressembler l'arborescence après ajout de la base de données 
 
